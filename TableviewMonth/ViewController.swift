@@ -55,31 +55,30 @@ class ViewController: UIViewController {
         
         //2022년 매월의 시작일 ~ 마지막일 구하기
         for i in 1 ... 12{
+            // 해당 달의 모든 일을 담을 배열 ex) 1일 ~ 31일
             var weekend:[String] = []
+            // 평일을 제외한 주말을 filter해서 담을 배열
             var filterWeek:[String] = []
+            
             let date = dateFormatter.date(from: "2022-\(i)-01")
 
             let components = calendar.dateComponents([.year, .month], from: date!)
 
             let startOfMonth = calendar.date(from: components)
             
-            let comp1 = calendar.dateComponents([.day,.weekday,.weekOfMonth], from: startOfMonth!)
-
             let nextMonth = calendar.date(byAdding: .month, value: +1, to: startOfMonth!)!
-
+            
             let endOfMonth = calendar.date(byAdding: .day, value: -1, to:nextMonth)
 
             let comp2 = calendar.dateComponents([.day,.weekday,.weekOfMonth], from: endOfMonth!)
 
-            for j in comp1.day!...comp2.day! {
+            for j in 1...comp2.day! {
                 //전체 주말
                 weekend.append(weekEnd(iMonth: i, iDay: j))
                 // ""값 이외 모든 값 filter == 해당 달의 주말
                 filterWeek = (weekend.filter( { (value: String) -> Bool in return (value != "") } ))
-                
             }
             weekEndArray.append(filterWeek)
-            
         }
         
         //전체 데이터
@@ -94,7 +93,6 @@ class ViewController: UIViewController {
         for i in 0 ..< month.count / 2 {
             evenData.append(CellData(SectionData: weekEndArray[(i*2)+1], title: month[(i*2)+1], open: false))
         }
-        
         //처음에 보여지는 달의 데이터는 전체
         viewData = allData
     }
@@ -155,7 +153,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
             // 닫혀있는 경우 title만 보여주기 위해서 return 1
             return 1
         }
-        
     }
     // MARK: row에 들어갈 데이터
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
