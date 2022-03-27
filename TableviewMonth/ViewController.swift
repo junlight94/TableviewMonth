@@ -74,6 +74,7 @@ class ViewController: UIViewController {
             for j in comp1.day!...comp2.day! {
                 //전체 주말
                 weekend.append(weekEnd(iMonth: i, iDay: j))
+                // ""값 이외 모든 값 filter == 해당 달의 주말
                 filterWeek = (weekend.filter( { (value: String) -> Bool in return (value != "") } ))
                 
             }
@@ -94,10 +95,12 @@ class ViewController: UIViewController {
             evenData.append(CellData(SectionData: weekEndArray[(i*2)+1], title: month[(i*2)+1], open: false))
         }
         
+        //처음에 보여지는 달의 데이터는 전체
         viewData = allData
     }
     
     //주말 반환 함수 (DateFormat, Calendar)
+    // (day)토, (day)일, 평일이면 "" 반환
     func weekEnd(iMonth:Int, iDay:Int) -> String{
         let weekArray = ["일", "월", "화", "수", "목", "금", "토"]
         let dateFormat = DateFormatter()
@@ -116,22 +119,26 @@ class ViewController: UIViewController {
         return ""
     }
     
+    // 전체 데이터 버튼
     @IBAction func allDataAction(_ sender: Any) {
         viewData = allData
         tableView.reloadData()
     }
     
+    // 홀수 데이터 버튼
     @IBAction func oddAction(_ sender: Any) {
         viewData = oddData
         tableView.reloadData()
     }
     
+    // 짝수 데이터 버튼
     @IBAction func evenAction(_ sender: Any) {
         viewData = evenData
         tableView.reloadData()
     }
     
 }
+
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
     // MARK: Section의 개수
@@ -153,11 +160,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     // MARK: row에 들어갈 데이터
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
+        //섹션
         // indexPath.row 가 0인 경우 즉, 카테고리 제목인 경우에는 title을 뿌려줍니다
         if indexPath.row == 0{
             cell.cellLabel.text = viewData[indexPath.section].title
             return cell
         } else{
+            //섹션의 row
+            // - 1 을 해주는 이유는 카테고리 title 부분은 빼야 하기 때문
             cell.cellLabel.text = viewData[indexPath.section].SectionData[indexPath.row - 1]
             return cell
         }
